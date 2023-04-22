@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang='ko'>
+
+<head>
+    <meta charset="UTF-8">
+    <title>MBTI 끝판왕</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="naver-site-verification" content="f7734bd79f75b000115e42c0a7d9ad1989d882ab" />    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .chat-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .chat-box {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow-y: scroll;
+            height: 300px;
+        }
+
+        .chat-message {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .chat-message p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-input {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .chat-input button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background-color: #3e8e41;
+        }
+
+        .assistant {
+            color: blue;
+        }
+
+        .typeInsert-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .typeInsert-container img {
+            width: 50%;
+            min-width: 300px;
+        }
+
+        .intro-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .intro-container img {
+            width: 50%;
+            min-width: 300px;
+        }
+
+        #add-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #next-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #goback-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            justify-content: center;
+            align-items : center;
+        }
+
+        #loader {
+            font-size: 25px;
+            text-align: center;
+        }
+        .kakao-ad{
+            display: flex;
+            justify-content: center;
+            align-items:center;
+            margin-top: 20px;
+            min-width:350px;
+            min-height:200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="intro" class="intro-container">
+        <h1>당신의 MBTI에 딱 맞는 역할을 알려 드립니다.</h1>
+
+        <img src="mbti2.jpeg" alt="mbtitype">
+        <hr>
+        <!-- <div class="button-container"> -->
+        <button type="button" id="add-btn" onclick="add()">참여자 추가</button>
+        <!-- <button type="button" id="done-btn"><i class="fas fa-check"></i>참여자 추가 완료</button> -->
+        <!-- </div> -->
+        <hr>
+        <div id="typeInsert" class="typeInsert-container" style="display: none;">
+            <label for="name">이름</label>
+            <input id="name" type="text">
+            <label for="hour">유형</label>
+            <select id="type" name="type">
+                <option value="모름">모름</option>
+                <option value="INFP">INFP</option>
+                <option value="INFJ">INFJ</option>
+                <option value="INTP">INTP</option>
+                <option value="INTJ">INTJ</option>
+                <option value="ISFP">ISFP</option>
+                <option value="ISFJ">ISFJ</option>
+                <option value="ISTP">ISTP</option>
+                <option value="ISTJ">ISTJ</option>
+                <option value="INFP">INFP</option>
+                <option value="INFJ">INFJ</option>
+                <option value="ENFP">ENFP</option>
+                <option value="ENFJ">ENFJ</option>
+                <option value="ENTP">ENTP</option>
+                <option value="ENTJ">ENTJ</option>
+                <option value="ESFP">ESFP</option>
+                <option value="ESFJ">ESFJ</option>
+                <option value="ESTP">ESTP</option>
+                <option value="ESTJ">ESTJ</option>
+                <option value="ENFP">ENFP</option>
+                <option value="ENFJ">ENFJ</option>
+            </select>
+            <button onclick="adding()">추가</button>
+        </div>
+        <div id="output"></div>
+        <!-- <label for="situation">어떤 상황 이신가요?</label>
+        <textarea style="width: 500px; height: 300px;"></textarea> -->
+        <hr>
+        <button onclick="start()" id="next-btn" style="display: none;">참여자 추가 완료 및 다음 단계로 이동하여 질문</button>
+    </div>
+    <div id="chat" class="chat-container" style="display: none;">
+        <div class="chat-box">
+            <div class="chat-message">
+                <p class="assistant">다음과 같이 물어보시면 더 정확하게 답해 드릴 수 있습니다. 예를들어, 이런이런...상황에서 입력한 사람들의 MBTI에 맞는 역할을 부여해줘. 심지어 성격과
+                    전혀 관계가 없는 질문, 오늘 짬뽕? 짜장? 도 집요하게 한번 물어보세요 :) 정확한 답이 아니어도 되니까 대답 해줘!</p>
+            </div>
+        </div>
+        <div id="loader" class="loader" style="display: none;">
+            <i class="fa fa-spinner fa-spin"></i>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Type your message here...">
+            <button id="btn" onclick="spinner()">Send</button>
+        </div>
+        <hr>
+        <button onclick="window.location.href = '/' " id="goback-btn">참석자 다시 입력</button>
+    </div>
+    <div class="kakao-ad">
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-Xwa6FYPSDjRW04Qi" data-ad-width="320"
+            data-ad-height="100"></ins>
+        <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+    </div>
+    <script>
+        const chatBox = document.querySelector('.chat-box');
+        let userMessages = [];
+        let assistantMessages = [];
+        let myDateTime = ''
+        const outputDiv = document.getElementById('output');
+        let people = [];
+        function spinner() {
+            document.getElementById('loader').style.display = "block";
+        }
+
+        function add() {
+            document.getElementById("typeInsert").style.display = "block";
+            document.getElementById("next-btn").style.display = "block";
+        }
+        function adding() {
+            const name = document.getElementById('name').value;
+            const type = document.getElementById('type').value;
+
+            if (name && type) {
+                const person = { name, type };
+                people.push(person);
+                name.value = '';
+                type.value = '';
+                displayPeople();
+            }
+            document.getElementById("name").value = "";
+            document.getElementById("type").value = "";
+        }
+
+        function displayPeople() {
+            //             const table = document.createElement('table');
+            // const thead = document.createElement('thead');
+            // const tbody = document.createElement('tbody');
+
+            // // Create the table header
+            // const headerRow = document.createElement('tr');
+            // const nameHeader = document.createElement('th');
+            // nameHeader.textContent = 'Name';
+            // headerRow.appendChild(nameHeader);
+            // const ageHeader = document.createElement('th');
+            // ageHeader.textContent = 'Type';
+            // headerRow.appendChild(typeHeader);
+            // thead.appendChild(headerRow);
+
+            // // Create the table rows
+            // for (let i = 0; i < data.length; i++) {
+            //   const person = people[i];
+            //   const row = document.createElement('tr');
+            //   const nameCell = document.createElement('td');
+            //   nameCell.textContent = person.name;
+            //   row.appendChild(nameCell);
+            //   const typeCell = document.createElement('td');
+            //   typeCell.textContent = person.type;
+            //   row.appendChild(tyhpeCell);
+            //   tbody.appendChild(row);
+            // }
+
+            // table.appendChild(thead);
+            // table.appendChild(tbody);
+            outputDiv.innerHTML = '';
+
+            for (let i = 0; i < people.length; i++) {
+                const person = people[i];
+                const p = document.createElement('p');
+                p.textContent = `Name: ${person.name}, Type: ${person.type}`;
+                outputDiv.appendChild(p);
+            }
+        }
+        function start() {
+            // const name = document.getElementById('name').value;
+            // const type = document.getElementById('type').value;
+            //     if (date === '') {
+            //         alert('생년월일을 입력해주세요.');
+            //         return;
+            // function start() {
+            //     const date = document.getElementById('date').value;
+            //     const hour = document.getElementById('hour').value;
+            //     if (date === '') {
+            //         alert('생년월일을 입력해주세요.');
+            //         return;
+            //     }
+            //     myDateTime = date + hour;
+
+            document.getElementById("intro").style.display = "none";
+            document.getElementById("chat").style.display = "block";
+        }
+
+        const sendMessage = async () => {
+            const chatInput = document.querySelector('.chat-input input');
+            const chatMessage = document.createElement('div');
+            chatMessage.classList.add('chat-message');
+            chatMessage.innerHTML = `<p>${chatInput.value}</p>`;
+            chatBox.appendChild(chatMessage);
+
+            //userMessage 메세지 추가
+            userMessages.push(chatInput.value);
+
+            chatInput.value = '';
+
+            const response = await fetch('https://07o9c02278.execute-api.ap-northeast-2.amazonaws.com/prod/fortuneTell', {
+                method: 'POST',
+                headers: {
+                    // 'Access-Control-Allow-Origin': '*',
+                    // 'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    people: people,
+                    // myName: name,
+                    // myType: type,
+                    myDateTime: myDateTime,
+                    userMessages: userMessages,
+                    assistantMessages: assistantMessages,
+                })
+            });
+
+            const data = await response.json();
+            document.getElementById('loader').style.display = "none";
+            //assistantMessage 메세지 추가
+            assistantMessages.push(data.assistant);
+
+            //             const keywords = [people[0].type];
+            //             messages.forEach((assistantMessages) => {
+            //   const text = assistantMessages.textContent.toLowerCase();
+            //   if (keywords.some((keyword) => text.includes(keyword))) {
+            //     // If the message contains at least one keyword, display it
+            //     message.style.display = 'block';
+            //   }
+            // });
+
+            const astrologerMessage = document.createElement('div');
+            astrologerMessage.classList.add('chat-message');
+            
+            astrologerMessage.innerHTML = `<p class='assistant'>${data.assistant}</p>`;
+            const p = document.createElement('p');
+            p.innerHTML = '현재는 베타 버전인데 링크를 통해 작은 후원을 해 주신다면 UI개선(음성인식 추가 등)및 더 똑똑한 MBTI 전문가로 거듭나도록 하겠습니다. => ';
+            p.classList.add("assistant");
+            const link = document.createElement('a');
+            link.href = 'https://toss.me/jaydenb';
+            link.innerHTML = '후원하기';
+            p.appendChild(link);
+            astrologerMessage.appendChild(p);
+            "<p> <a href='https://toss.me/jaydenb'>후원하기 </a></p>";
+            chatBox.appendChild(astrologerMessage);
+        };
+
+        document.querySelector('.chat-input button').addEventListener('click', sendMessage);
+    </script>
+</body>
+
+</html>
